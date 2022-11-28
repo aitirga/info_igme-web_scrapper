@@ -1,4 +1,4 @@
-from scripts.process_igme_info import process_igme_info
+from scripts import process_igme_info
 
 
 if __name__ == '__main__':
