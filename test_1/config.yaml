@@ -1,3 +1,3 @@
 home_url: https://info.igme.es/bdaguas/
 excel_files: [./excel_files/test.xlsx]
-target_variables: ['Medidas de piezometría', 'Litologías']
+target_variables: ['Medidas de piezometría', 'Litologías', 'Análisis químicos']
