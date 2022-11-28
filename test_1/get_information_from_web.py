@@ -3,7 +3,7 @@ from pathlib import Path
 import yaml
 from box import Box
 import pandas as pd
-from tqdm import tqdm
+import tqdm
 import logging
 from typing import List, Union, Dict
 
@@ -34,7 +34,7 @@ class ColoredFormatter(logging.Formatter):
 
     def __init__(self, *args, **kwargs):
         self._colors = {logging.DEBUG: self.DARK_GREY,
-                        logging.INFO: self.RESET,
+                        logging.INFO: self.GREEN,
                         logging.WARNING: self.BROWN,
                         logging.ERROR: self.RED,
                         logging.CRITICAL: self.LIGHT_RED}
@@ -49,8 +49,8 @@ class ColoredFormatter(logging.Formatter):
         self._colors[logging_level] = escaped_ansi_code
 
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger('test')
 logger.setLevel(logging.INFO)
 ch = logging.StreamHandler()
 ch.setLevel(logging.INFO)
@@ -76,6 +76,8 @@ def process_tables(tables: List[pd.DataFrame],
     info_table = tables[0][0].dropna().reset_index(drop=True)
     for var in info_table.iloc[1:]:
         if var == 'Información del punto':
+            continue
+        elif 'System' in var:
             continue
         if var in target_variables:
             logger.info(f'Processing variable {var} from id {id}')
@@ -126,12 +128,12 @@ if __name__ == '__main__':
     results_folder.mkdir(exist_ok=True)
     assert config.target_variables is not None, 'target_variables must be defined in config file'
     for excel_file in config.excel_files:
-        excel_results_file = results_folder / Path(excel_file).name
+        excel_results_file = results_folder / Path(excel_file).stem
         excel_results_file.mkdir(exist_ok=True)
         id_list = pd.read_excel(excel_file, header=1)['Id']
         data_dict = {}
-        for id in tqdm(id_list, desc='processing urls'):
-            logger.info(f'Processing id {id}')
+        for id in tqdm.tqdm(id_list, desc='processing urls'):
+            logger.info(f'\nProcessing id {id}')
             url = f'https://info.igme.es/BDAguasReport/Rpt/PointInfo.aspx?id={id}'
             tables = pd.read_html(url)
             processed_tables = process_tables(tables, target_variables=config.target_variables, function_dict=function_dict, id=id)
