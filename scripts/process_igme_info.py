@@ -122,7 +122,7 @@ function_dict = {
 }
 
 
-if __name__ == '__main__':
+def process_igme_info():
     config = read_config()
     results_folder = Path('./results')
     results_folder.mkdir(exist_ok=True)
