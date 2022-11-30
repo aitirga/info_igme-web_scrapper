@@ -79,13 +79,13 @@ def process_tables(tables: List[pd.DataFrame],
             continue
         elif 'System' in var:
             continue
-        if var in target_variables:
-            logger.info(f'Processing variable {var} from id {id}')
-            table_dict[var] = function_dict[var](tables[info_table[info_table == var].index[0]], id)
-        elif var in function_dict.keys():
-            logger.warning(f'Detected variable {var} from id {id} but not processed')
-        else:
-            logger.warning(f'{var} not implemented')
+        # if var in target_variables:
+        logger.info(f'Processing variable {var} from id {id}')
+        table_dict[var] = function_dict[var](tables[info_table[info_table == var].index[0]], id)
+        # elif var in function_dict.keys():
+        #     logger.warning(f'Detected variable {var} from id {id} but not processed')
+        # else:
+        #     logger.warning(f'{var} not implemented')
     return table_dict
 
 def process_piezometry(df: pd.DataFrame, id: str) -> pd.DataFrame:
