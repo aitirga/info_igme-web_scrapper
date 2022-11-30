@@ -142,7 +142,7 @@ def process_igme_info():
             processed_tables = process_tables(tables, target_variables=config.target_variables, function_dict=function_dict, id=id)
             data_dict[id] = processed_tables
 
-        for key in config.target_variables:
+        for key in data_dict:
             concat_list = []
             for id in data_dict:
                 case = data_dict[id]
