@@ -3,3 +3,4 @@ python-box
 beautifulsoup4
 requests
 pandas
+unidecode

@@ -6,7 +6,7 @@ import pandas as pd
 import tqdm
 import logging
 from typing import List, Union, Dict
-
+from unidecode import unidecode
 # Create basic logger
 
 class ColoredFormatter(logging.Formatter):
@@ -74,21 +74,20 @@ def process_tables(tables: List[pd.DataFrame],
     # info table
     table_dict = {}
     info_table = tables[0][0].dropna().reset_index(drop=True)
+    # normalize column names using unidecode
+    info_table.iloc[1:] = [unidecode(col) for col in info_table.iloc[1:]]
     for var in info_table.iloc[1:]:
-        if var == 'Información del punto':
+        if var == 'Informacion del punto':
             continue
         elif 'System' in var:
             continue
-        # if var in target_variables:
-        try:
+        if var in target_variables:
             logger.info(f'Processing variable {var} from id {id}')
             table_dict[var] = function_dict[var](tables[info_table[info_table == var].index[0]], id)
-        except:
+        elif var in function_dict.keys():
+            logger.warning(f'Detected variable {var} from id {id} but not processed')
+        else:
             logger.warning(f'{var} not implemented')
-        # elif var in function_dict.keys():
-        #     logger.warning(f'Detected variable {var} from id {id} but not processed')
-        # else:
-        #     logger.warning(f'{var} not implemented')
     return table_dict
 
 def process_piezometry(df: pd.DataFrame, id: str) -> pd.DataFrame:
@@ -119,9 +118,9 @@ def process_chemical_analysis(df: pd.DataFrame, id: str) -> pd.DataFrame:
 
 
 function_dict = {
-    'Medidas de piezometría': process_piezometry,
-    'Análisis químicos': process_chemical_analysis,
-    'Litologías': process_lithologies,
+    'Medidas de piezometria': process_piezometry,
+    'Analisis quimicos': process_chemical_analysis,
+    'Litologias': process_lithologies,
 }
 
 
@@ -142,7 +141,7 @@ def process_igme_info():
             processed_tables = process_tables(tables, target_variables=config.target_variables, function_dict=function_dict, id=id)
             data_dict[id] = processed_tables
 
-        for key in data_dict:
+        for key in config.target_variables:
             concat_list = []
             for id in data_dict:
                 case = data_dict[id]
